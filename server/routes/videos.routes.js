@@ -1,0 +1,28 @@
+import { Router } from "express";
+import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
+import { checkAuth } from "../middleware/auth.js";
+import {
+  createPresignedDownloadURL,
+  createPresignedUploadURL,
+} from "../lib/s3.js";
+import { upload } from "../lib/multer.js";
+
+const router = Router();
+
+const s3Client = new S3Client({ region: "ap-southeast-2" });
+
+router.get("/upload-video", checkAuth, async (req, res) => {
+  const presignedPost = await createPresignedUploadURL(req.user.username);
+  res.json(presignedPost).status(200);
+});
+
+router.get("/download-video", checkAuth, upload.none(), async (req, res) => {
+  const id = req.body.videoId;
+  console.log(id);
+  const presignedGet = await createPresignedDownloadURL(req.user.username, id);
+  res.json(presignedGet).status(200);
+});
+
+router.get("/list-videos");
+
+export default router;
