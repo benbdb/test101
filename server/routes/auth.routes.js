@@ -20,6 +20,14 @@ router.get("/login", (req, res) => {
   res.redirect(authUrl);
 });
 
+router.get("/me", (req, res) => {
+  if (req.session.userInfo) {
+    res.json({ authenticated: true, user: req.session.userInfo });
+  } else {
+    res.json({ authenticated: false });
+  }
+});
+
 router.get("/callback", async (req, res) => {
   try {
     const client = getClient();
