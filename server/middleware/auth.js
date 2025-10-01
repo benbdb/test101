@@ -5,6 +5,8 @@ export const checkAuth = async (req, res, next) => {
   if (req.session.userInfo) {
     req.isAuthenticated = true;
     req.user = req.session.userInfo;
+
+    console.log(req.session);
     return next();
   }
 

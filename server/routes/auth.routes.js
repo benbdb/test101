@@ -37,8 +37,13 @@ router.get("/callback", async (req, res) => {
       state: req.session.state,
     });
 
+    const claims = tokenSet.claims();
+    console.log("ID Token Claims:", claims);
+    console.log("User Groups:", claims["cognito:groups"]);
+
     const userInfo = await client.userinfo(tokenSet.access_token);
     req.session.userInfo = userInfo;
+    req.session.userInfo.userGroups = claims["cognito:groups"];
 
     res.redirect("/");
   } catch (err) {

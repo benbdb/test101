@@ -1,4 +1,4 @@
-import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
+import { DynamoDBClient, GetItemCommand } from "@aws-sdk/client-dynamodb";
 import {
   DynamoDBDocumentClient,
   PutCommand,
@@ -45,5 +45,25 @@ export const getVideoList = async (userid) => {
   } catch (err) {
     console.log(err);
     return undefined;
+  }
+};
+
+export const checkUserHasVideos = async (userId) => {
+  const command = new QueryCommand({
+    TableName: tableName,
+    KeyConditionExpression: "userId = :uid",
+    ExpressionAttributeValues: {
+      ":uid": userId,
+    },
+  });
+
+  try {
+    const response = await docClient.send(command);
+
+    // If we get at least one item, user has videos
+    return response.Items && response.Items.length > 0;
+  } catch (err) {
+    console.error("DynamoDB query error:", err);
+    return false;
   }
 };

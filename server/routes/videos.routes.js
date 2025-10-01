@@ -7,7 +7,11 @@ import {
 } from "../lib/s3.js";
 import { v4 as uuidv4 } from "uuid";
 import { upload } from "../lib/multer.js";
-import { addVideoToTable, getVideoList } from "../lib/dynamodb.js";
+import {
+  addVideoToTable,
+  checkUserHasVideos,
+  getVideoList,
+} from "../lib/dynamodb.js";
 import { transcodeVideo } from "../lib/ffmpeg.js";
 import { downloadFromPresignedUrlAxios } from "../utils.js";
 import { unlink } from "fs/promises";
@@ -17,6 +21,9 @@ import { __dirname } from "../utils.js";
 const router = Router();
 
 router.get("/upload-video", checkAuth, upload.none(), async (req, res) => {
+  const exists = await checkUserHasVideos(req.user.username);
+  if (exists && req.user.userGroups[0] === "free") res.status(423);
+  console.log(exists);
   const id = uuidv4();
   const filename = req.body.filename;
   await addVideoToTable(req.user.username, id, filename);
