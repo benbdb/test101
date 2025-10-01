@@ -20,7 +20,7 @@ import { __dirname } from "../utils.js";
 
 const router = Router();
 
-router.get("/upload-video", checkAuth, upload.none(), async (req, res) => {
+router.post("/upload-video", checkAuth, upload.none(), async (req, res) => {
   const exists = await checkUserHasVideos(req.user.username);
   if (exists && req.user.userGroups[0] === "free") res.status(423);
   console.log(exists);
