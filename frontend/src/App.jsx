@@ -14,6 +14,24 @@ function App() {
   const [loadingVideos, setLoadingVideos] = useState(false)
   const [transcodedUrls, setTranscodedUrls] = useState({})
 
+  const downloadFile = async (url, filename) => {
+    try {
+      const response = await fetch(typeof url === 'string' ? url : url?.url)
+      if (!response.ok) throw new Error('Failed to download file')
+      const blob = await response.blob()
+      const objectUrl = URL.createObjectURL(blob)
+      const link = document.createElement('a')
+      link.href = objectUrl
+      link.download = filename
+      document.body.appendChild(link)
+      link.click()
+      link.remove()
+      URL.revokeObjectURL(objectUrl)
+    } catch (err) {
+      setMessage(err.message || 'Download failed')
+    }
+  }
+
   useEffect(() => {
     fetchMe()
       .then((data) => {
@@ -162,13 +180,11 @@ function App() {
                           Use for Transcoding
                         </button>
                         {transcodedUrls[video.videoId] && (
-                          <button 
+                          <button
                             onClick={() => {
                               const url = transcodedUrls[video.videoId]
-                              if (typeof url === 'string') {
-                                window.open(url, '_blank')
-                              } else if (url?.url) {
-                                window.open(url.url, '_blank')
+                              if (typeof url === 'string' || url?.url) {
+                                downloadFile(url, `${video.videoId}.mp4`)
                               } else {
                                 setMessage('Invalid download URL')
                               }

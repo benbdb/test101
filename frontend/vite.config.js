@@ -11,6 +11,7 @@ export default defineConfig({
       '/callback': 'http://localhost:3000',
       '/me': 'http://localhost:3000',
       '/upload-video': 'http://localhost:3000',
+      '/transcode': 'http://localhost:3000',
       '/download-video': 'http://localhost:3000',
       '/list-videos': 'http://localhost:3000'
     }

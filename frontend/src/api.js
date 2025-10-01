@@ -38,9 +38,13 @@ export async function uploadToS3(presignedPost, file) {
 }
 
 export async function transcodeVideo(videoId) {
-  const res = await fetch(`/transcode?videoId=${encodeURIComponent(videoId)}`, {
-    method: 'GET',
-    credentials: 'include'
+  const formData = new FormData();
+  formData.append('videoId', videoId);
+
+  const res = await fetch('/transcode', {
+    method: 'POST',
+    credentials: 'include',
+    body: formData
   });
   if (!res.ok) throw new Error('Failed to transcode video');
   return res.json();
