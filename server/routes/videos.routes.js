@@ -31,7 +31,7 @@ router.post("/upload-video", checkAuth, upload.none(), async (req, res) => {
   res.json(presignedPost).status(200);
 });
 
-router.get("/transcode", checkAuth, upload.none(), async (req, res) => {
+router.post("/transcode", checkAuth, upload.none(), async (req, res) => {
   console.log(req.body);
   const videoId = req.body["videoId"];
   console.log(videoId);

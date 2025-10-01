@@ -8,11 +8,13 @@ import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { createReadStream } from "fs";
 import { __dirname } from "../utils.js";
 import path from "path";
+import { getConfig } from "../config.js";
 
 export const s3Client = new S3Client({ region: "ap-southeast-2" });
 
 export const createPresignedUploadURL = async (user, id) => {
-  const Bucket = process.env.BUCKET_NAME;
+  const config = getConfig();
+  const Bucket = config.BUCKET_NAME;
   const Key = `${user}/uploaded/${id}`;
   console.log(Key);
   const Fields = {
@@ -22,7 +24,7 @@ export const createPresignedUploadURL = async (user, id) => {
     Bucket,
     Key,
     Fields,
-    Expires: 6000,
+    Expires: parseInt(config.S3_UPLOAD_EXPIRY) || 6000,
   });
   return {
     url,
@@ -31,19 +33,21 @@ export const createPresignedUploadURL = async (user, id) => {
 };
 
 export const createPresignedDownloadURL = async (user, videoId, transcoded) => {
+  const config = getConfig();
   const input = {
-    Bucket: "a2-pair91",
+    Bucket: config.BUCKET_NAME,
     Key: `${user}/${transcoded ? "transcoded" : "uploaded"}/${videoId}${
       transcoded ? ".mp4" : ""
     }`,
   };
   const command = new GetObjectCommand(input);
-  const url = await getSignedUrl(s3Client, command, { expiresIn: 600 });
+  const url = await getSignedUrl(s3Client, command, { expiresIn: parseInt(config.S3_DOWNLOAD_EXPIRY) || 600 });
   return url;
 };
 
 export const uploadVideoToS3 = async (userid, videoid) => {
   try {
+    const config = getConfig();
     const filePath = path.join(__dirname, "/tmp/transcoded", videoid + ".mp4");
     const fileStream = createReadStream(filePath);
 
@@ -51,7 +55,7 @@ export const uploadVideoToS3 = async (userid, videoid) => {
 
     const response = await s3Client.send(
       new PutObjectCommand({
-        Bucket: "a2-pair91",
+        Bucket: config.BUCKET_NAME,
         Key: objectKey,
         Body: fileStream,
         ContentType: "video/mp4",
