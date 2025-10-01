@@ -36,16 +36,13 @@ function App() {
     fetchMe()
       .then((data) => {
         setAuth(data)
-        if (!data.authenticated) {
-          login()
-        } else {
+        if (data.authenticated) {
           // Load videos when user is authenticated
           loadVideos()
         }
       })
       .catch(() => {
         setAuth({ authenticated: false })
-        login()
       })
       .finally(() => setLoading(false))
   }, [])
@@ -110,6 +107,19 @@ function App() {
       <div>
         <h1>Video Portal</h1>
         <p className="read-the-docs">Checking session…</p>
+      </div>
+    )
+  }
+
+  if (!auth.authenticated) {
+    return (
+      <div>
+        <h1>Video Portal</h1>
+        <section className="card">
+          <h2>Sign in</h2>
+          <p>Please sign in to continue.</p>
+          <button onClick={login}>Login with Cognito</button>
+        </section>
       </div>
     )
   }
