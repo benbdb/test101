@@ -6,14 +6,12 @@ import axios from "axios";
 import { createWriteStream, mkdir } from "fs";
 
 export const downloadFromPresignedUrlAxios = async (presignedUrl, filename) => {
-  // Ensure the output directory exists
   await mkdir("/tmp/uploads", (err) => {
     console.log(err);
   });
 
   const outputPath = path.join(__dirname, "/tmp/uploads", filename);
 
-  // Download with streaming
   const response = await axios({
     method: "GET",
     url: presignedUrl,
@@ -22,7 +20,6 @@ export const downloadFromPresignedUrlAxios = async (presignedUrl, filename) => {
 
   const writer = createWriteStream(outputPath);
 
-  // Track progress
   const totalSize = parseInt(response.headers["content-length"], 10);
   let downloadedSize = 0;
 

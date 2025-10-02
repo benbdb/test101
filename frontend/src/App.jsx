@@ -37,7 +37,6 @@ function App() {
       .then((data) => {
         setAuth(data)
         if (data.authenticated) {
-          // Load videos when user is authenticated
           loadVideos()
         }
       })
@@ -53,7 +52,6 @@ function App() {
       setUploading(true)
       setMessage('Requesting upload URL...')
       
-      // Debug: Check authentication status before making request
       const authCheck = await fetchMe()
       console.log('Auth status before upload:', authCheck)
       
@@ -61,7 +59,6 @@ function App() {
       setMessage('Uploading to S3...')
       await uploadToS3(presigned, file)
       setMessage('Uploaded successfully! You can now transcode the video.')
-      // Refresh video list after upload
       await loadVideos()
     } catch (e) {
       setMessage(e.message || 'Upload failed')
@@ -78,9 +75,7 @@ function App() {
       setMessage('Starting video transcoding...')
       const downloadUrl = await transcodeVideo(videoId)
       setMessage('Transcoding completed! Download URL ready.')
-      // Store the transcoded URL
       setTranscodedUrls(prev => ({ ...prev, [videoId]: downloadUrl }))
-      // Refresh video list after transcoding
       await loadVideos()
     } catch (e) {
       setMessage(e.message || 'Transcoding failed')

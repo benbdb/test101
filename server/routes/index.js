@@ -11,10 +11,6 @@ router.get("/", checkAuth, (req, res) => {
   console.log("Session data:", req.session);
   console.log("Is authenticated:", req.isAuthenticated);
   res.sendFile(path.join(__dirname, "../frontend/dist", "index.html"));
-  //res.render("home", {
-  //isAuthenticated: req.isAuthenticated,
-  //userInfo: req.session.userInfo,
-  //});
 });
 
 router.use(authRoutes);

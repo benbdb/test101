@@ -8,8 +8,6 @@ import routes from "./routes/index.js";
 import { upload } from "./lib/multer.js";
 import { loadConfig, getConfig } from "./config.js";
 import secret from "./secrets.js";
-
-// Load configuration from Parameter Store
 await loadConfig();
 const config = getConfig();
 

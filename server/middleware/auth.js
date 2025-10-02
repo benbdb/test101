@@ -10,7 +10,6 @@ export const checkAuth = async (req, res, next) => {
     return next();
   }
 
-  // Tokens for API calls (Postman)
   const authHeader = req.headers.authorization;
   if (authHeader?.startsWith("Bearer ")) {
     const token = authHeader.substring(7);

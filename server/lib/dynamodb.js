@@ -60,7 +60,6 @@ export const checkUserHasVideos = async (userId) => {
   try {
     const response = await docClient.send(command);
 
-    // If we get at least one item, user has videos
     return response.Items && response.Items.length > 0;
   } catch (err) {
     console.error("DynamoDB query error:", err);
